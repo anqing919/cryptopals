@@ -1,5 +1,4 @@
 import binascii
-from os import path
 import sys
 from Crypto.Cipher import AES
 
