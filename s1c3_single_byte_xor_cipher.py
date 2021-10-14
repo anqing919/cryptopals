@@ -12,7 +12,7 @@ def get_english_score(bytes):
     }
     return sum([character_frequencies.get(chr(byte),0) for byte in bytes.lower()])
 
-def burteforce_single_char_xor(ct):
+def bruteforce_single_char_xor(ct):
     potential_results = []
     for k in range(0x00,0x100):
         pt = bytes([i^k for i in ct])
@@ -27,4 +27,4 @@ def burteforce_single_char_xor(ct):
 
 if __name__ == "__main__":
     ct = binascii.a2b_hex("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-    print((burteforce_single_char_xor(ct)["pt"]).decode())
+    print((bruteforce_single_char_xor(ct)["pt"]).decode())
