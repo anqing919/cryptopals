@@ -41,6 +41,8 @@ class ECB_Orcale:
         return dict_date
 
 def cut_and_paste(oracle):
+    # Use the length as you understand the roles each block plays,
+    # if not, read the url at the top.
     prefix_len = AES.block_size - len("email=")
     suffix_len = AES.block_size - len("admin")
     email1 = 'A' * prefix_len + "admin" + chr(suffix_len) * suffix_len

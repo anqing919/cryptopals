@@ -7,7 +7,7 @@ from Crypto.Util.Padding import pad, unpad
 
 class ECB_Oracle:
     def __init__(self,secret_padding):
-        self.__key = get_random_bytes(AES.block_size)
+        self.__key = get_random_bytes(AES.key_size[0])
         self.__secret_padding = secret_padding
         self.__cipher = AES.new(self.__key, AES.MODE_ECB)
         self.secret_padding_len = len(secret_padding)

@@ -23,5 +23,16 @@
    ValueError: invalid literal for int() with base 16: '\n'
    ```
 
+3. `byte`类型的数据串索引得到的为`int`类型数据
+    ```python
+    >>> str1 = b'ICE ICE BABY\x04\x04\x04\x04'
+    >>> str1[0]
+    73
+    >>> str1[-1]
+    4
+    >>> type(str1[-1])
+    <class 'int'>
+    ```
+
    
 
