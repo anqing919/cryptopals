@@ -23,34 +23,17 @@ class CBC_oracle:
 
     def encrypt(self):
         cipher = AES.new(self.__key, AES.MODE_CBC, self.__iv)
-        return self.__iv + cipher.encrypt(pad(binascii.a2b_base64(self.__choice), AES.block_size))
+        return cipher.encrypt(pad(binascii.a2b_base64(self.__choice), AES.block_size))
 
     def detect_padding(self, ct):
         cipher = AES.new(self.__key, AES.MODE_CBC, self.__iv)
+        print("len(ct):",len(ct))
         pt = cipher.decrypt(ct)
         padding = pt[-pt[-1]:]
         return all(i == pt[-1] for i in padding)
 
 # # TypeError: 'bytes' object does not support item assignment
 # # （比特）字符串是不可变的
-# def cbc_padding_oracle(oracle, ct):
-#     ct_list = [ct[i:i+AES.block_size] for i in range(0, len(ct), AES.block_size)]
-#     pt = b""
-
-#     for i in range(len(ct_list) - 1):
-#         iv_work = bytes([0] * AES.block_size)
-#         median_work = bytes([0] * AES.block_size)
-#         for iv_byte_pos in range(AES.block_size-1, -1, -1):
-#             iv_work[iv_byte_pos+1:] = bytes([(AES.block_size - iv_byte_pos) ^ int(x) for x in median_work[iv_byte_pos+1:]])
-#             for iv_byte_value in range(0x100):
-#                 iv_work[iv_byte_pos] = iv_byte_value
-#                 right = oracle.decrypt(iv_work)
-#                 if right == True:
-#                     break
-#             median_work[iv_byte_pos] = bytes([(AES.block_size - iv_byte_pos) ^ iv_byte_value])
-#         pt += bytes([x^y for (x,y) in zip(ct_list[i], median_work)])
-#     return pt
-
 def cbc_padding_oracle(oracle_decrypt, ct):
     ct_list = [ct[i:i+AES.block_size] for i in range(0, len(ct), AES.block_size)]
     pt = ""
@@ -61,7 +44,11 @@ def cbc_padding_oracle(oracle_decrypt, ct):
             iv_work[iv_byte_pos+1:] = [(AES.block_size - iv_byte_pos) ^ x for x in median_work[iv_byte_pos+1:]]
             for iv_byte_value in range(0x100):
                 iv_work[iv_byte_pos] = iv_byte_value
-                padding_right = oracle_decrypt(ct)
+                # ct_work = "".join(iv_work + list(ct_list[chunk_pos+1]))
+                ct_work = "".join([chr(i) for i in (iv_work + list(ct_list[chunk_pos + 1]))])
+                print(len(ct_work))
+                print(len(ct_work.encode()))
+                padding_right = oracle_decrypt(ct_work.encode())
                 if padding_right == 1:
                     break
             median_work[iv_byte_pos] = (AES.block_size - iv_byte_pos) ^ iv_byte_value
